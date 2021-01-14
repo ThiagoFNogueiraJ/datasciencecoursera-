@@ -1,0 +1,99 @@
+---
+title: "R_Programing"
+author: "Thiago Nogueira"
+date: "13/01/2021"
+output: html_document
+---
+#Semana 1
+##O que é R?
+
+R é uma linguagem orientada a objetos voltada ao processamento de dados e análises estatísicas. Ela é derivada de uma outra linguagem de programação chamada S.
+R é um software livre, o que significa que ele goza das liberdades definidas pela Open Software Foundatiom, como a liberdade de distribuição e a de modificação. 
+
+##Objetos em R
+
+A linguagem tem cinco tipos de objetos principais, também chamados de atômicos. São elezs
+
+1. Character - letras e símbolos 
+2. Numéric - números reais
+3. Integer - números inteirs
+4. complex - números complexos
+5. lógical - TRUE/FALSE
+
+##Coerção
+
+Em algumas situações, o R irá forçar a mudança da classe de um objeto. Por exemplo, o número 1, inteiro, pode virar "1" character. 
+
+##Estruturas de dados
+
+###Vector - vetores
+A estrutura mais símples em R é um vector. Um vetor é um conjunto de objetos homogêneos, isto é, de mesma classe. 
+
+Podemos usar a função >vector() ou a função c()
+
+```{r}
+x <- c("a","b","c")
+x
+y <- vector("logical", 3)
+y
+```
+
+Ao tentar criar um vetor com objetos de classes diferentes, o R irá coagir, forçar, o(s) objeto(s) da classe menos comum para a classe mais comum no vetor. 
+
+```{r}
+x<- c(FALSE, 1,2,3)
+x
+```
+###List - Listas 
+
+São uma modificação dos vetores são as listas, que permitem tipos heterogêneos em sua composição.
+
+Podemos usar a funçção list() para criar esses conjuntos. 
+
+```{r}
+z<- list("alfa", 1, F, 1+4i)
+z
+```
+###Matrices - matrizes
+
+São objetos bidimensionais, contendo m linhas e n colunas. 
+
+Podemos criar matrizes de diversas formas: 
+```{r}
+#Função matrix
+m <- matrix(nrow = 3, ncol = 3)
+m
+dim(m)
+
+#Especificando os valores que preencherão a matriz. A função alocará os valores de coluna em coluna, de cima para baixo e da esquerda para a direita
+
+m<- matrix(1:9, nrow = 3, ncol = 3)
+
+#Juntando dois vetores
+
+x<- 1:3
+y<- 10:12
+
+cbind(x, y) # juntando os vetores como colunas
+rbind(x,y) # Juntando os vetores como linhas
+```
+
+##Factors - Fatores
+
+Estrutura de armazenamento de varíaveis categóricas, onde as categorias são chamadas de _levels_. 
+
+Para criar um fator:
+
+```{r}
+x<- factor(c("yes","no","maybe","yes","no","maybe","yes","no","maybe"))
+x
+table(x) #conta o número de objetos em cada level dentro do fator
+
+
+#Variáveis categóricas podem ser ordenadas ou não. Por padrão, a função factor() atribui um nível para cada categoria de acordo com a ordem de aparição no fator. Podemos especificar a ordem desejada definindo o parâmetro 'levels'. 
+y<- factor(c("yes","no","maybe","yes","no","maybe","yes","no","maybe","yes","no","maybe"),
+           levels = c("maybe","yes", "no"))
+y
+
+```
+

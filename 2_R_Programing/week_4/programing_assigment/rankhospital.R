@@ -1,54 +1,33 @@
 rankhospital <- function(state, outcome, num){
-  pdata <- read.csv("week_4/programing_assigment/data/outcome-of-care-measures.csv", sep = ",")
+
+  pdata <- read.csv("2_R_Programing/week_4/programing_assigment/data/outcome-of-care-measures.csv", sep = ",")
+  outcomes <- c("heart attack", "heart failure", "pneumonia")
+  names(pdata)[c(11,17,23)] <- outcomes
+  pdata[pdata == "Not Available"] <- NA
+  pdata[,11] <- as.numeric(pdata[,11])
+  pdata[,17] <- as.numeric(pdata[,17])
+  pdata[,23] <- as.numeric(pdata[,23])
+  
   if (state %in% unique(pdata$State) == FALSE){stop("invalid state")}
-  if (outcome %in% c("heart attack", "heart failure", "pneumonia") == FALSE){stop("invalid state")}
-  sdata<- subset(pdata, State == state, c(2, 11,17,23))
-  if (outcome == "heart attack"){
-    sdata[,2] <- as.numeric(sdata[,2])
-    if (num == "best") {
-      all_best <- which(sdata[,2] == min(sdata[,2], na.rm = TRUE))
-    } 
-    if (num == "worst") {
-      all_best <- which(sdata[,2] == max(sdata[,2], na.rm = TRUE))
-    } 
-    if (is.integer(num) == TRUE) {
-      all_best <- which(sdata[,2] == sort(sdata[,2], na.last =TRUE)[num])
-    }
-    best_h <- sdata[all_best, 1]
+  if (outcome %in% outcomes == FALSE){stop("invalid state")}
+  if (is.numeric(num) & num > length(unique(sdata$Hospital.Name))) {stop(NA)}
+  
+  sdata<- subset(pdata, State == state, c("Hospital.Name", outcome))
+  sdata <- sdata[order(sdata[,2], sdata[,1]),]
+  
+  if (num == "best") {
+    all_best <- sdata[1,1]
   } 
-  if (outcome == "heart failure"){
-    sdata[,3] <- as.numeric(sdata[,3])
-    if (num == "best") {
-      all_best <- which(sdata[,3] == min(sdata[,3], na.rm = TRUE))
-    } 
-    if (num == "worst") {
-      all_best <- which(sdata[,3] == max(sdata[,3], na.rm = TRUE))
-    } 
-    if (is.integer(num) == TRUE) {
-      all_best <- which(sdata[,3] == sort(sdata[,3], na.last =TRUE)[num])
-    }
-    best_h <- sdata[all_best, 1]
+  if (num == "worst") {
+    all_best <- tail(sdata[which(!is.na(sdata[,2])),],1)[1,1]
   } 
-  if (outcome == "pneumonia"){
-    sdata[,4] <- as.numeric(sdata[,4])
-    if (num == "best") {
-      all_best <- which(sdata[,4] == min(sdata[,4], na.rm = TRUE))
-    } 
-    if (num == "worst") {
-      all_best <- which(sdata[,4] == max(sdata[,4], na.rm = TRUE))
-    } 
-    if (is.integer(num) == TRUE) {
-      all_best <- which(sdata[,4] == sort(sdata[,4], na.last =TRUE)[num])
-    }
-    best_h <- sdata[all_best, 1]
-  } 
-  if(length(best_h > 1)){
-    best_h <- sort(best_h, decreasing = FALSE)
-    best_h <- best_h[1]
+  if (is.numeric(num)) {
+    all_best <- sdata[num, 1]
   }
-  best_h
+all_best
 }
 
-rankhospital("TX", "heart failure", 4)
-rankhospital("MD", "heart attack", "worst")
-rankhospital("MN", "heart attack", 5000)
+rankhospital("NC", "heart attack", "worst")
+rankhospital("WA", "heart attack", 7)
+rankhospital("TX", "pneumonia", 10)
+rankhospital("NY", "heart attack", 7)

@@ -1,5 +1,5 @@
 best <- function(state, outcome){
-  pdata <- read.csv("week_4/programing_assigment/data/outcome-of-care-measures.csv", sep = ",")
+  pdata <- read.csv("2_R_Programing/week_4/programing_assigment/data/outcome-of-care-measures.csv", sep = ",")
   if (state %in% unique(pdata$State) == FALSE){
     stop("invalid state")
   }
@@ -29,3 +29,6 @@ if(length(best_h > 1)){
 best_h
 }
 
+best("SC", "heart attack")
+best("NY", "pneumonia")
+best("AK", "pneumonia")

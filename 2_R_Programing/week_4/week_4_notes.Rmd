@@ -1,0 +1,100 @@
+---
+title: "Simulating and profiling"
+author: "Thiago Nogueira"
+date: "27/01/2021"
+output: html_document
+---
+
+Aqui estudaremos algumas funcionalidades do R que nos permitirão fazer simulações e otimizar funções e processos. 
+
+## srt()
+
+A função str(), de structure, nos fornece, de forma simplificada e limpa, a estrutura de um objeto em R. 
+
+``` {r}
+str(ls)
+
+data(mtcars)
+str(mtcars)
+```
+
+## Gerando dados aleatórios
+
+O R permite que geremos dados aleatórios através de algumas funções definidas para diversas distribuições estatísticas. 
+Cada distribuição possui quatro funções básicas, iniciadas por uma letra:
+
+r - gera um vetor com números aleatórios aleatórios da distribuição. 
+d - função densidade de probabilidade
+p - função de probabilidade cumulada 
+q - função quantil. 
+
+``` {r}
+#Gera um vetor com 10 números retirados de uma distribuição normal, de média 2 e desvio padrão 2
+
+rnorm( 10 , 2 , 2)
+```
+Às vezes é desejável conseguir reproduzir os mesmos números aleatórios gerados anteriormente. Se repetirmos o uso da função rnorm, por exemplo, ainda que com os mesmos parâmetros de média e desvio padrão, não obteremos o mesmo vetor. 
+
+A função set.seed() recebe um número e funcionará como um identificador, permitindo que possamos reproduzir os números. 
+
+``` {r}
+set.seed(2)
+rnorm( 100 , 2 , 2)
+rnorm( 100 , 2 , 2)
+set.seed(2)
+rnorm( 100 , 2 , 2)
+```
+## sample() - Amostragem 
+
+A função sample permite retirar amostras de um conjunto de dados de forma aleatória.  
+
+``` {r}
+set.seed(2)
+x <- rnorm(20 , 2 , 2)
+
+#Retira aleatoriamente 10 amostras de x.
+sample(x,10)
+
+#Permite amostras com repetição
+sample(x, 10, replace = TRUE)
+
+#Se não estabelecermos um número de amostras, a funçção apenas fará uma ordenação aleatória. 
+
+sample(x)
+```
+
+## Otimização
+
+Às vezes o pedaço de código que você escreveu pode parecer rodar bem, mas, quando incluído num contexto maior, como uma função que é chamada algumas milhares de vezes em um script, você pode querer otimizá-lo. 
+O R fornece algumas ferramentas que parametrizam o funcionamento da função e nos permitem fazer a engenharia de software necessária para eliminar gargalos e diminuir o tempo de execução. 
+
+### system.time()
+
+Essa função calcula o tempo em segundos necessários para executar uma expressão. 
+Ela separa o tempo gasto em categorias:
+
+1 -  user time: tempo gasto pela CPU para executar o código, ou o tempo que o computador experiência. 
+2 -  elapsed time tempo que o usuário experiencia, as vezes também chamado de “wall clock”. 
+
+No geral, ambos terão valores muito próximos ou iguais. 
+
+elapsed time > user time - Significa que uma parte do tempo de execução é dedicada a um processo externo, como acessar uma página web, por exemplo.
+
+user time > elapsed time - Significa que o código é executado em paralelo, por vários núcleos. Assim, o user time é a soma do tempo de execução em cada núcleo. 
+
+``` {r}
+system.time({
+set.seed(2)
+x <- rnorm(20 , 2 , 2)
+
+sample(x)})
+```
+
+### summaryRprof()
+
+Essa função calcula o tempo gasto para cada função do código. Existem dois métodos de normalização do tempo::
+
+1 - “by.total” : divide o tempo gasto em cada função pelo tempo total de execução. 
+2 - “by.self” - Subtrai o tempo gasto nas funções superiores e então divide o tempo gasto em cada função pelo tempo total de execução. 
+
+É preferível escolher o método “by.self”, pois em muitos casos, o computador gasta mais tempo nas funções secundárias que são chamadas pela função de alto nível. Por esse método, fica mais fácil visualizar o tempo gasto realmente. 

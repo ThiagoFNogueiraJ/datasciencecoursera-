@@ -1,0 +1,105 @@
+---
+title: "Week_3_notes"
+author: "Thiago Nogueira"
+date: "25/01/2021"
+output: html_document
+---
+
+## Loop functions 
+
+São funções que executam de modo sintético, em loop, uma função secundária sobre um objeto. 
+
+### Declaração implícita/anônima de funções. 
+
+É possívle definir funções dentro das funções loop, que só existirão naquele contexto.
+
+### lapply()
+
+Executa uma função sobre uma lista e retorna uma lista como resultado. Se o objeto de entrada não for uma lista, ele será coagido a lista e, se a coerção não for possível, a função retornará um erro. 
+
+```{r}
+x <- 1:5
+lapply(x, is.na)
+```
+
+### sapply()
+
+Semelhante à lapply, porém tentará simplificar o objeto de saída. Enquanto a lapply sempre retornará uma lista, sapply retornará um objeto simplificado. 
+
+```{r}
+sapply(x,function(x) x**x)
+```
+### apply()
+
+Aplica a função a determinada margem (dimensão) de um objeto. 
+
+```{r}
+#Cria uma matriz 2x10
+I <- rbind(1:10, 11:20)
+
+#Aplica a função mean às linhas da matriz I, colapsando as colunas.
+apply(I, 1, mean) 
+
+#Aplica a função meanàs colunas da matriz I, colapsando as linhas. 
+apply(I, 2, mean)
+```
+Existem funções específicas para calcular médias e somas sobre linhas/colunas. É preferível utilizá-las uma vez que foram otimizadas para realizar estes calculos 
+
+```{r}
+rowMeans(I) # apply(x, 1, mean)
+rowSums(I)  # = apply(x, 1, sumn)
+colMeans(I)  # = apply(x, 2, mean)
+colSums(I)  # = apply(x, 2, sum)
+```
+
+É possível também usar apply() para objetos de 2+ dimensões
+
+```{r}
+#Cria um objeto de três dimensões
+a<- array(rnorm(2*2*10), c(2,2,10))
+
+#Calcula a média da terceira dimensão
+apply(a, c(1,2), mean)
+```
+### mapply()
+
+Aplica uma função de forma vetorizada a mais de um objeto de forma paralela. (Equivalente a loops for aninhados?) 
+
+```{r}
+i <- 1:10
+j <- 11:20
+
+mapply(paste, "oi", i, j)
+```
+### tapply()
+
+Dado um vetor, é possível calcular funções sobre grupos dentro deste vetor. 
+
+```{r}
+#cria um vetor com 30 elementos
+y<- c(rnorm(10), runif(10), rnorm(10))
+
+#Fator com identificadores para os elementos do vetor y. 
+f <- gl(3,10)
+
+#calcula a função mean para cada um dos três grupos do vetor. 
+#tapply(vector, index, function)
+tapply(y, f, mean)
+```
+
+### split()
+
+Não é uma função de loop, mas usualmente é usada em conjunto com as funções acima. Split divide um objeto de acordo com os nívies de um fator especificado e retorna uma lista em que cada elemento corresponde a um dos níveis. 
+Assim, é possível calcular funçõe para cada categoria de uma variável. Quando passado mais de um fator, split também permite calcular as intersecções entre as categorias, 
+
+```{r}
+z<- rnorm(10)
+
+f1 <- gl(2,5)
+f2 <- gl(5,2)
+
+str(split(z, list(f1, f2)))
+str(split(z, list(f1, f2), drop = TRUE))
+
+```
+
